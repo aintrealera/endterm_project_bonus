@@ -58,7 +58,10 @@ Base URL: `http://localhost:8080/api/books`
 
 ## 6. Screenshots
 Please check the `screenshots/` folder for proof of work:
-* `get_all.png` - List of books.
-* `post_builder.png` - Creating a book.
-* `database.png` - Database table view.
-* `uml.png` - Project architecture.
+
+* **1. GET Request:** `get_all_books.png` - Shows the list of books returning 200 OK.
+* **2. POST (Builder):** `post_create_builder.png` - Creating a standard book with JSON body.
+* **3. POST (Factory):** `post_create_factory.png` - Creating a book via query params (Factory pattern).
+* **4. DELETE Request:** `delete_book.png` - Deleting a book by ID.
+* **5. Database:** `database_view.png` - View of the `books` table in PostgreSQL.
+* **6. UML:** `uml_diagram.png` - Project architecture diagram.
