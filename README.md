@@ -1,67 +1,107 @@
-# Library Management System API
+# Library Management System with In-Memory Cache
 
-## 1. Description
-This is a Spring Boot REST API for a Library System. It allows users to manage books (Create, Read, Delete) and demonstrates the usage of Design Patterns and SOLID principles.
+##  Project Overview
 
-## 2. Tech Stack
-* **Java 17**
-* **Spring Boot 3.4.x**
-* **PostgreSQL**
-* **Maven**
+This project is a simple **Library Management System** implemented as a **Spring Boot REST application**.  
+It demonstrates the use of **layered architecture**, **creational design patterns**, and **component cohesion principles**.
+
+As a bonus feature, a **simple in-memory caching layer** was added to improve performance for frequently accessed data.
 
 ---
 
-## 3. Design Patterns Used
-I implemented 3 patterns as required:
+##  Architecture
 
-### 1. Singleton (`LibraryLogger`)
-* **What it does:** Creates one global instance for logging.
-* **Where to find:** `src/main/java/.../pattern/LibraryLogger.java`
-* **Usage:** Logs every GET request in the Console.
+The project follows a **layered architecture**:
 
-### 2. Factory (`BookFactory`)
-* **What it does:** Creates different types of books (Digital/Physical) based on a simple string parameter.
-* **Where to find:** `src/main/java/.../pattern/BookFactory.java`
+- **Controller layer** – handles HTTP requests
+- **Service layer** – contains business logic
+- **Repository layer** – interacts with the database
+- **Model layer** – represents domain entities
+- **Cache layer** – manages cached data
+- **Pattern layer** – contains design pattern implementations
 
-### 3. Builder (`Book.Builder`)
-* **What it does:** Helps to create `Book` objects cleanly without huge constructors.
-* **Where to find:** Inside `Book.java` model.
+This separation improves maintainability and follows the **Separation of Concerns** principle.
 
 ---
 
-## 4. API Endpoints
-Base URL: `http://localhost:8080/api/books`
+##  Design Patterns Used
 
-| Method | URL | Description |
-| :--- | :--- | :--- |
-| **GET** | `/api/books` | Get list of all books |
-| **POST** | `/api/books` | Create a book (JSON body) |
-| **POST** | `/api/books/quick` | Create via Factory (Params: `title`, `type`) |
-| **DELETE** | `/api/books/{id}` | Delete book by ID |
+### Singleton
+- Used in `LibraryLogger` to ensure only one logger instance exists.
+- Used in `BookCache` to manage a single cache instance across the application.
 
----
+### Factory Method
+- Implemented in `BookFactory`.
+- Responsible for creating `Book` objects based on their type.
+- Keeps object creation logic separate from business logic.
 
-## 5. How to Run
-
-1. **Database:**
-   * Make sure PostgreSQL is running.
-   * Create a database named `library_db`.
-
-2. **Configuration:**
-   * Open `src/main/resources/application.properties`.
-   * Check your username and password.
-
-3. **Run:**
-   * Run `LibrarySystemApplication.java` in IntelliJ IDEA.
+### Builder
+- Implemented as a static inner class in `Book`.
+- Allows step-by-step creation of complex objects.
+- Improves readability and avoids large constructors.
 
 ---
 
-## 6. Screenshots
-Please check the `screenshots/` folder for proof of work:
+##  In-Memory Caching Layer (Bonus Task)
 
-* **1. GET Request:** `get_all_books.png` - Shows the list of books returning 200 OK.
-* **2. POST (Builder):** `post_create_builder.png` - Creating a standard book with JSON body.
-* **3. POST (Factory):** `post_create_factory.png` - Creating a book via query params (Factory pattern).
-* **4. DELETE Request:** `delete_book.png` - Deleting a book by ID.
-* **5. Database:** `database_view.png` - View of the `books` table in PostgreSQL.
-* **6. UML:** `uml_diagram.png` - Project architecture diagram.
+### Objective
+Improve application performance by caching frequently requested data in memory.
+
+### Implementation Details
+- A simple **in-memory cache** is implemented using a Singleton class `BookCache`.
+- The cache stores the result of the `getAllBooks()` method.
+- Cached data is returned on repeated calls instead of querying the database again.
+- The cache is **automatically invalidated** after `save` or `delete` operations.
+
+### Why Singleton?
+Only one cache instance should exist to ensure consistent cached data across the application.
+
+---
+
+##  Cache Invalidation Strategy
+
+- **Read operation (`getAllBooks`)**
+  - If cached data exists → return it
+  - If not → fetch from database and store in cache
+
+- **Write operations (`save`, `delete`)**
+  - Cache is cleared to prevent stale data
+
+---
+
+## 📐 SOLID & Component Principles
+
+- **Single Responsibility Principle (SRP)**  
+  Each class has a single responsibility (controller, service, cache, repository).
+
+- **Reuse/Release Equivalence Principle (REP)**  
+  Related classes are grouped and reused together.
+
+- **Common Closure Principle (CCP)**  
+  Classes that change together are grouped logically.
+
+- **Common Reuse Principle (CRP)**  
+  Controllers depend only on services, not on repositories or cache directly.
+
+---
+
+##  Technologies Used
+
+- Java
+- Spring Boot
+- Spring Data JPA
+- REST API
+- In-Memory Caching
+- Maven
+
+---
+
+##  Summary
+
+This project demonstrates:
+- Clean layered architecture
+- Proper use of creational design patterns
+- Application of component cohesion principles
+- Performance optimization using a simple in-memory cache
+
+The caching mechanism enhances performance while preserving architectural integrity and SOLID principles.
